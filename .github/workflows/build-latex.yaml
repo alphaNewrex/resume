@@ -17,32 +17,75 @@ jobs:
       - name: Create output directory
         run: mkdir -p output
 
+      # Install TeX Live with all necessary packages
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-xetex \
+            texlive-luatex \
+            texlive-lang-english \
+            latexmk \
+            cm-super
+
+      # List all relevant files for debugging
+      - name: Debug file structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Files in professional directory:"
+          find ./professional -type f | grep -v ".git" | sort
+          echo "Files in academic directory:"
+          find ./academic -type f | grep -v ".git" | sort
+
+      # Compile Professional Resume
       - name: Compile Professional Resume
-        uses: xu-cheng/latex-action@v2
-        with:
-          root_file: professional/main.tex
-          working_directory: ./
-          args: '-pdf -file-line-error -halt-on-error -interaction=nonstopmode'
+        run: |
+          cd professional
+          echo "Running pdflatex for professional resume..."
+          pdflatex -interaction=nonstopmode main.tex
+          echo "Running bibtex if bibliography exists..."
+          if grep -q '\\bibliography{' main.tex; then
+            bibtex main
+            pdflatex -interaction=nonstopmode main.tex
+          fi
+          echo "Running pdflatex again for references..."
+          pdflatex -interaction=nonstopmode main.tex
+          echo "Professional resume compilation finished"
+          cp main.pdf ../output/professional_resume.pdf || exit 1
 
-      - name: Move Professional PDF to output
-        run: mv professional/main.pdf output/professional_resume.pdf
-
+      # Compile Academic Resume
       - name: Compile Academic Resume
-        uses: xu-cheng/latex-action@v2
-        with:
-          root_file: academic/main.tex
-          working_directory: ./
-          args: '-pdf -file-line-error -halt-on-error -interaction=nonstopmode'
+        run: |
+          cd academic
+          echo "Running pdflatex for academic resume..."
+          pdflatex -interaction=nonstopmode main.tex
+          echo "Running bibtex if bibliography exists..."
+          if grep -q '\\bibliography{' main.tex; then
+            bibtex main
+            pdflatex -interaction=nonstopmode main.tex
+          fi
+          echo "Running pdflatex again for references..."
+          pdflatex -interaction=nonstopmode main.tex
+          echo "Academic resume compilation finished"
+          cp main.pdf ../output/academic_resume.pdf || exit 1
 
-      - name: Move Academic PDF to output
-        run: mv academic/main.pdf output/academic_resume.pdf
+      # Show output directory contents
+      - name: List output directory
+        run: ls -la output/
 
+      # Upload PDFs as artifacts
       - name: Upload PDFs as artifacts
         uses: actions/upload-artifact@v4
         with:
           name: compiled-resumes
           path: output/*.pdf
+          if-no-files-found: warn
 
+      # Commit PDFs to repository
       - name: Commit and push PDFs to repository
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |

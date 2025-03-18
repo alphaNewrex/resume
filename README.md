@@ -3,16 +3,20 @@
 This repository contains LaTeX source files for both professional and academic resumes. The repository is structured with a modular approach, separating content into reusable components that can be easily updated and maintained.
 
 ## Repository Structure
+```
 resume/ 
-├── academic/ # Academic resume files 
-│ ├── main.tex # Main document that imports all components 
-│ ├── resume.cls # Class file for academic resume formatting 
-│ ├── sections/ # Content sections (education, experience, etc.) │ └── styles/ # Style configurations 
-├── professional/ # Professional resume files 
-│ ├── main.tex # Main document that imports all components 
-│ ├── sections/ # Content sections (education, experience, etc.) │ └── styles/ # Style configurations and commands 
-├── output/ # Generated PDF files 
-└── .github/workflows/ # GitHub Actions workflow definitions
+├── academic/            # Academic resume files
+│   ├── main.tex         # Main document that imports all components 
+│   ├── resume.cls       # Class file for academic resume formatting 
+│   ├── sections/        # Content sections (education, experience, etc.)
+│   └── styles/          # Style configurations 
+├── professional/        # Professional resume files 
+│   ├── main.tex         # Main document that imports all components 
+│   ├── sections/        # Content sections (education, experience, etc.)
+│   └── styles/          # Style configurations and commands 
+├── output/              # Generated PDF files 
+└── .github/workflows/   # GitHub Actions workflow definitions
+```
 
 ## Prerequisites
 

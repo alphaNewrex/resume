@@ -38,7 +38,7 @@ jobs:
             mv main.pdf ../output/professional_resume.pdf
           else
             echo "Professional resume compilation failed"
-            exit 0
+            exit 1
           fi
 
       - name: Compile Academic Resume

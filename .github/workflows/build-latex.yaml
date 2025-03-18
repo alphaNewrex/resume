@@ -85,12 +85,27 @@ jobs:
           path: output/*.pdf
           if-no-files-found: warn
 
+      # Check if .gitignore is ignoring PDFs
+      - name: Check .gitignore
+        run: |
+          echo "Checking if .gitignore exists and contains output/*.pdf"
+          if [ -f ".gitignore" ]; then
+            cat .gitignore
+            echo ""
+            if grep -q "output/" .gitignore || grep -q "*.pdf" .gitignore; then
+              echo "Found rules that might be ignoring PDFs"
+            fi
+          else
+            echo "No .gitignore file found"
+          fi
+
       # Commit PDFs to repository
       - name: Commit and push PDFs to repository
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add output/*.pdf
-          git commit -m "Update compiled resume PDFs" -f || echo "No changes to commit"
+          # Force add the PDFs
+          git add -f output/*.pdf
+          git commit -m "Update compiled resume PDFs" || echo "No changes to commit"
           git push

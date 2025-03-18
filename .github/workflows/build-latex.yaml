@@ -2,40 +2,55 @@ name: Build LaTeX Resumes
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    types: [ closed ]
-    branches: [ main ]
+    types: [closed]
+    branches: [main]
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true || github.event_name == 'push'
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Set up TeX Live
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: ""
-          
+          root_file: ''
+
       - name: Create output directory
         run: mkdir -p output
-      
+
       - name: Compile Professional Resume
         run: |
           cd professional
           pdflatex main.tex
           mv main.pdf ../output/professional_resume.pdf
-      
+
       - name: Compile Academic Resume
         run: |
           cd academic
           pdflatex main.tex
           mv main.pdf ../output/academic_resume.pdf
-        preview_pdf:
+
+      - name: Upload PDFs as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-resumes
+          path: output/*.pdf
+
+      - name: Commit and push PDFs to repository
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add output/*.pdf
+          git commit -m "Update compiled resume PDFs" || echo "No changes to commit"
+          git push
+
+  preview_pdf:
     needs: build_latex
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
@@ -44,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: compiled-resumes
-          
+
       - name: Comment PR with PDF links
         uses: actions/github-script@v6
         with:
@@ -52,23 +67,10 @@ jobs:
           script: |
             const fs = require('fs');
             const issue_number = context.issue.number;
-            
+
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue_number,
               body: 'PDF preview ready!\nCheck the artifacts of this build for compiled PDFs.'
             });
-      - name: Upload PDFs as artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: compiled-resumes
-          path: output/*.pdf
-          
-      - name: Commit and push PDFs to repository
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add output/*.pdf
-          git commit -m "Update compiled resume PDFs" || echo "No changes to commit"
-          git push

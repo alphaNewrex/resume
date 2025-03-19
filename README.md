@@ -2,6 +2,26 @@
 
 This repository contains LaTeX source files for both professional and academic resumes. The repository is structured with a modular approach, separating content into reusable components that can be easily updated and maintained.
 
+## Accessing Compiled PDFs
+
+The GitHub Actions workflow automatically compiles the LaTeX files and pushes the resulting PDFs to a dedicated branch.
+
+### Latest Resume PDFs
+
+To access the latest compiled PDFs:
+1. Go to the [`gh-actions/output`](https://github.com/alphaNewrex/resume/tree/gh-actions/output) branch
+2. Navigate to the `output` directory
+3. Download the desired PDF file:
+   - `professional_resume.pdf` - Latest professional resume
+   - `academic_resume.pdf` - Latest academic resume
+
+### Personal Website Integration
+
+The professional resume is also automatically integrated with the personal website repository:
+1. The workflow creates a branch named `gh-actions/resume` in the `alphanewrex.github.io` repository
+2. The professional resume is copied to the `public` folder
+3. To deploy this to your website, merge the `gh-actions/resume` branch into your main website branch
+
 ## Repository Structure
 ```
 resume/ 

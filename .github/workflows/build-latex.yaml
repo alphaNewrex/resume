@@ -140,7 +140,7 @@ jobs:
       - name: Create resume branch and update website
         run: |
           # Navigate to website repository
-          cd website
+          cd alphanewrex.github.io
 
           # Create and switch to resume branch
           git checkout -B gh-actions/resume

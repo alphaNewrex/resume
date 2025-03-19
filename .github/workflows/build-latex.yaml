@@ -99,13 +99,64 @@ jobs:
             echo "No .gitignore file found"
           fi
 
-      # Commit PDFs to repository
-      - name: Commit and push PDFs to repository
+      # Commit PDFs to a separate branch
+      - name: Commit and push PDFs to output branch
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
+          # Create and switch to the output branch
+          git fetch --all
+          git checkout -B gh-actions/output
+
+          # Force add PDFs
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Force add the PDFs
           git add -f output/*.pdf
+
+          # Commit and push to the output branch
           git commit -m "Update compiled resume PDFs" || echo "No changes to commit"
-          git push
+          git push -f origin gh-actions/output
+
+  update_website:
+    needs: build_latex
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download compiled resumes
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-resumes
+          path: ./resumes
+
+      - name: List downloaded files
+        run: ls -la ./resumes
+
+      - name: Checkout personal website repository
+        uses: actions/checkout@v4
+        with:
+          repository: alphaNewrex/alphanewrex.github.io
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          path: website
+
+      - name: Create resume branch and update website
+        run: |
+          # Navigate to website repository
+          cd website
+
+          # Create and switch to resume branch
+          git checkout -B gh-actions/resume
+
+          # Create public folder if it doesn't exist
+          mkdir -p public
+
+          # Copy the professional resume to the public folder
+          cp ../resumes/professional_resume.pdf public/
+
+          # Rename the professional resume to resume.pdf
+          mv public/professional_resume.pdf public/resume.pdf
+
+          # Commit and push changes
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/professional_resume.pdf
+          git commit -m "Update resume" || echo "No changes to commit"
+          git push -f origin gh-actions/resume

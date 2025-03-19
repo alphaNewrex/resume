@@ -139,24 +139,43 @@ jobs:
 
       - name: Create resume branch and update website
         run: |
-          # Navigate to website repository
-          cd alphanewrex.github.io
-
           # Create and switch to resume branch
           git checkout -B gh-actions/resume
 
           # Create public folder if it doesn't exist
           mkdir -p public
 
-          # Copy the professional resume to the public folder
-          cp ../resumes/professional_resume.pdf public/
-
-          # Rename the professional resume to resume.pdf
-          mv public/professional_resume.pdf public/resume.pdf
+          # Copy the professional resume to the public folder and rename
+          cp ../resumes/professional_resume.pdf public/resume.pdf
 
           # Commit and push changes
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/professional_resume.pdf
+          git add public/resume.pdf
           git commit -m "Update resume" || echo "No changes to commit"
           git push -f origin gh-actions/resume
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          # Install GitHub CLI
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh
+
+          # Create PR using GitHub CLI
+          cd website
+          PR_EXISTS=$(gh pr list --repo alphaNewrex/alphanewrex.github.io --head gh-actions/resume --json number | jq length)
+
+          if [ "$PR_EXISTS" -eq "0" ]; then
+            gh pr create --repo alphaNewrex/alphanewrex.github.io \
+              --base main \
+              --head gh-actions/resume \
+              --title "Update Resume PDF" \
+              --body "This PR updates the resume PDF file. Automatically created by GitHub Actions."
+            echo "Pull request created successfully!"
+          else
+            echo "Pull request already exists, skipping creation"
+          fi

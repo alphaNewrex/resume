@@ -57,31 +57,19 @@
 	%showframe, % Uncomment to show how the type block is set on the page
 }
 
+\newcommand\sbullet[1][.5]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
+
 %----------------------------------------------------------------------------------------
-%	NAME AND ADDRESS COMMANDS
+%\tNAME AND ADDRESS COMMANDS (Simplified to single address line)
 %----------------------------------------------------------------------------------------
 
 \newcommand{\name}[1]{\renewcommand{\name}{#1}} % Defines the \name command to set the user's name
 
-\newcommand{\addressSep}{$\diamond$} % Set default address separator to a diamond symbol
+\newcommand{\addressSep}{\textbullet} % Use text bullet (robust in text mode) as separator
 
-% One, two or three address lines can be specified
+% Only one address line supported (additional calls overwrite the first intentionally)
 \let \@addressone \relax
-\let \@addresstwo \relax
-\let \@addressthree \relax
-
-% The \address command is used to set the first, second and third address lines (the last 2 are optional)
-\newcommand{\address}[1]{
-	\@ifundefined{@addressone}{ % If the first address line has not been set yet, set it
-		\def \@addressone {#1}
-	}{
-		\@ifundefined{@addresstwo}{ % If the second address line has not been set yet, set it
-			\def \@addresstwo {#1}
-		}{ % Otherwise, set the third address line
-			\def \@addressthree {#1}
-		}%
-	}
-}
+\newcommand{\address}[1]{\def \@addressone {#1}} % Single address line setter
 
 % \printaddress is used to style an address line (provided in the single parameter to the command)
 \newcommand{\printaddress}[1]{
@@ -95,10 +83,10 @@
 
 % \printname is used to output the user's name in a large size
 \newcommand{\printname}{
-	\begingroup
-		\hfil{\MakeUppercase{\huge\bfseries\name}}\hfil % Style and output the user's name
-		\bigskip\break % Vertical whitespace below name
-	\endgroup
+  \begingroup
+    \hfil{\MakeUppercase{\Large\bfseries\name}}\hfil % Reduced font size from huge to Large
+    \smallskip % Reduced vertical whitespace below name
+  \endgroup
 }
 
 %----------------------------------------------------------------------------------------
@@ -107,11 +95,9 @@
 
 \let\ori@document=\document % Store the original \document command
 \renewcommand{\document}{
-	\ori@document  % Output the original \document command but add to it below
-	\printname % Output the user's name
-	\@ifundefined{@addressone}{}{\printaddress{\@addressone}} % Output the first address if specified
-	\@ifundefined{@addresstwo}{}{\printaddress{\@addresstwo}} % Output the second address if specified
-	\@ifundefined{@addressthree}{}{\printaddress{\@addressthree}} % Output the third address if specified
+  \ori@document  % Output the original \document command but add to it below
+  \printname % Output the user's name
+  \@ifundefined{@addressone}{}{\printaddress{\@addressone}} % Single address line
 }
 
 %----------------------------------------------------------------------------------------
@@ -125,7 +111,7 @@
 	\medskip % Vertical whitespace
 	\hrule % Horizontal rule
 	\begin{list}{}{ % List to indent the entire content of the section
-		\setlength{\leftmargin}{1.5em} % Indent to the left of the list
+		\setlength{\leftmargin}{0em} % No indent
 	}
 	\item[] % Empty list item to enable indentation
 }{
@@ -143,9 +129,45 @@
 		\textit{#3} \hfill \textit{#4} % Output job title and location
 	}%
 	\smallskip % Vertical whitespace
-	\begin{list}{$\cdot$}{\leftmargin=0em} % \cdot used for bullets, no indentation
+	\begin{list}{$\sbullet [0.75]$}{\leftmargin=1.5em} % \cdot used for bullets, with indentation
 		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
 }{
 	\end{list}
 	\vspace{0.5em} % Vertical whitespace after the end of the list
+}
+
+\newenvironment{rTextSubsection}[4]{ % 4 parameters: company name, year(s) employed, job title and location
+	\textbf{#1} \hfill {#2} % Bold company name and date to the right
+	\ifthenelse{\equal{#3}{}}{}{ % If the third parameter is empty, don't output the job title and location line
+		\\ % Job title and location on a new line
+		#3 \hfill #4 % Output job title and location
+	}%
+	\begin{list}{}{\leftmargin=0em} % No indentation
+		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
+}{
+	\end{list}
+	}
+
+%----------------------------------------------------------------------------------------
+%	SUBSUBSECTION FORMATTING (for nested course entries)
+%----------------------------------------------------------------------------------------
+
+\newenvironment{rSubsubsection}[2]{ % 2 parameters: course/title and professor
+	\item \textbf{#1} \ifthenelse{\equal{#2}{}}{}{Assisted \textit{#2}} % Course name and optional professor
+	\begin{list}{$\circ$}{\leftmargin=2em} % Circle bullets for sub-items, indented further
+		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing
+}{
+	\end{list}
+}
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE FORMATTING
+%----------------------------------------------------------------------------------------
+
+\newenvironment{rReference}[4]{ % 4 parameters: name, title, department/organization, institution/company
+	\ifthenelse{\equal{#1}{}}{}{\textbf{#1}\ifthenelse{\equal{#2}{}}{}{, #2} \\} % Name and optional title
+	\ifthenelse{\equal{#3}{}}{}{#3 \\} % Department or organization (if provided)
+	\ifthenelse{\equal{#4}{}}{}{#4 \\} % Institution or company (if provided)
+}{
+	\vspace{0.5em} % Vertical whitespace after reference
 }

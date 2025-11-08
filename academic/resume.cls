@@ -60,7 +60,7 @@
 \newcommand\sbullet[1][.5]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
 
 %----------------------------------------------------------------------------------------
-%\tNAME AND ADDRESS COMMANDS (Simplified to single address line)
+%	NAME AND ADDRESS COMMANDS (Simplified to single address line)  
 %----------------------------------------------------------------------------------------
 
 \newcommand{\name}[1]{\renewcommand{\name}{#1}} % Defines the \name command to set the user's name

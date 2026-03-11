@@ -1,75 +1,27 @@
-% Experience Section
-\section{Experience}
-\resumeSubHeadingListStart
-\resumeSubheading {Software Engineer}{Hyderabad, India}
-{Microsoft --- Azure Cloud Migrate}{July 2024 --- Present}
-\resumeItemListStart
-      \resumeItem
-        {Primary Responsibility}
-        {Working on Azure Cloud Migrate, focusing on Kubernetes, distributed systems, and system performance optimization}
-      \resumeItem{Key Contributions}{
-        \begin{itemize}
-          \item Designing and implementing scalable cloud solutions for migrating on-premises applications
-          \item Collaborating with cross-functional teams to enhance migration workflows
-          \item Optimizing Kubernetes deployments for improved resource utilization and performance
-        \end{itemize}
-      }
-      \resumeItem{Technologies}
-      {Azure, Kubernetes, Distributed Systems, Cloud Architecture, Database Migration}
-  \resumeItemListEnd
+%----------------------------------------------------------------------------------------
+%   PROFESSIONAL EXPERIENCE SECTION
+%----------------------------------------------------------------------------------------
 
-  \resumeSubheading {Member of Technical Staff Intern}{Bengaluru, India}
-  {DevRev}{January 2024 --- June 2024}
-  \resumeItemListStart
-        \resumeItem
-          {Primary Responsibility}
-          {Optimized Global Notifications Microservice architecture handling \textbf{60,000+ daily notifications} by implementing \textbf{distributed rate limiting}, event-based throttling, and clustering algorithms}
-        \resumeItem{Key Contributions}{
-          \begin{itemize}
-            \item Engineered fault-tolerant notification rate limiter reducing spam by \textbf{85\%} and improving email delivery efficiency
-            \item Developed hierarchical clustering system with \textbf{O(log n)} retrieval time to reduce redundancy and organize updates more effectively
-            \item Architected LLM-powered notification summarizer using \textbf{OpenAI GPT-4} and \textbf{LangChain} with custom prompt engineering
-            \item Enhanced reminders, tasks, and bookmarking features to improve overall user experience
-            \item Took ownership of critical components while actively participating in system design discussions, debugging sessions, and performance optimization efforts
-          \end{itemize}
-        }
-        \resumeItem{Technologies}
-        {Microservices, Distributed Systems, OpenAI API, LangChain, Vector Embeddings, Redis Rate Limiting, Performance Optimization, Event-Based Architecture}
-  \resumeItemListEnd
+\begin{rSection}{Professional Experience}
 
-\resumeSubheading {Software Engineer Intern}{Hyderabad, India}
-{Microsoft}{May 2023 --- July 2023}
-\resumeItemListStart
-      \resumeItem
-        {Primary Responsibility}
-        {Designed and implemented Customer Side \textbf{Metrics for Monitoring Meters} and publishing them to Azure Monitor and Geneva Dashboard using OpenTelemetry}
-      \resumeItem{Key Contributions}{
-        \begin{itemize}
-          \item Actively contributed to design decisions for \textbf{Azure Business Continuity Center} (V1 product) with the Azure Core Compute Team
-          \item Implemented metrics using OpenTelemetry and its Geneva Extension
-          \item Developed comprehensive logging and monitoring solutions to enhance observability
-          \item Created documentation and examples to facilitate adoption by other teams
-        \end{itemize}
-      }
-      \resumeItem{Technologies}
-      {C\#, \.NET Framework, OpenTelemetry, Azure Monitor, Geneva Dashboard, MSTest, Telemetry}
-\resumeItemListEnd
+    \begin{rSubsection}{Software Engineer}{July 2024 --- Present}{Microsoft --- Azure Migrate}{Hyderabad, India}
+        \item Engineered discovery and assessment frameworks for \textbf{IISServer}, extending native horizontal coverage to \textbf{.NET Core, Python, PHP, and Java} apps across vCenter, Hyper-V, and Physical environments.
+        \item Re-architected the assessment engine for \textbf{resource-constrained environments}; implemented an \textbf{in-memory caching strategy} to prevent host resource exhaustion while maintaining high throughput.
+        \item Expanded end-to-end (E2E) service coverage across all \textbf{38 Azure regions}, ensuring \textbf{data integrity} and \textbf{high availability (HA)} for global enterprise-scale deployments.
+        \item Architected a critical fallback extension for non-container workloads, driving assessment coverage to \textbf{99.9\%} across a dataset of \textbf{100K+} enterprise workloads.
+        \item Built \textbf{distributed data pipelines} using \textbf{Kubernetes} and \textbf{Azure Resource Graph} to scale asset discovery across heterogeneous enterprise environments.
+    \end{rSubsection}
 
-\resumeSubheading {Summer Intern}{Mumbai, India}
-{LTI --- Larsen \& Toubro Infotech}{May 2022 --- July 2022}
-\resumeItemListStart
-      \resumeItem
-        {Primary Responsibility}
-        {Worked on \textbf{DataOps} for Fosfor Spectra software platform, building comprehensive test suites and facilitating data migration}
-      \resumeItem{Key Contributions}{
-        \begin{itemize}
-          \item Coordinated between developers and test engineers to build an \textbf{exhaustive set of tests}
-          \item Actively participated in Test Design Meetings and Daily SyncUps
-          \item Developed automation scripts to streamline data migration processes
-          \item Created test cases covering edge scenarios to ensure platform reliability
-        \end{itemize}
-      }
-      \resumeItem{Technologies}
-      {DevOps, Data Migration, Test Automation, Collaborative Development}
-\resumeItemListEnd
-\resumeSubHeadingListEnd
+    \begin{rSubsection}{Member of Technical Staff Intern}{January 2024 --- June 2024}{DevRev}{Bengaluru, India}
+        \item Scaled the Global Notifications microservice to handle \textbf{60K+ daily events} via distributed rate limiting, event-based throttling, and smart bucket clustering.
+        \item Architected a fault-tolerant limiter reducing spam by \textbf{85\%}; implemented hierarchical clustering with \textbf{$O(\log n)$ retrieval} to eliminate redundancy based on topic relevance.
+        \item Engineered an \textbf{LLM-driven summarization pipeline} (GPT-4/LangChain) for digest generation, compressing data throughput by \textbf{6x} and improving actionable signal density.
+        \item Owned performance profiling across high-throughput flows (reminders, tasks), optimizing system reliability for global delivery.
+    \end{rSubsection}
+
+    \begin{rSubsection}{Software Engineer Intern}{May 2023 --- July 2023}{Microsoft}{Hyderabad, India}
+        \item Instrumented customer-side meter telemetry using \textbf{OpenTelemetry} and \textbf{Geneva} for Azure Business Continuity Center, enabling real-time observability for V1 services.
+        \item Designed resilience and observability surfaces for continuity scenarios, delivering reusable metrics artifacts adopted by adjacent engineering teams to accelerate integration.
+    \end{rSubsection}
+
+\end{rSection}

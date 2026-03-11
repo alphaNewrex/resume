@@ -150,6 +150,21 @@
 	}
 
 %----------------------------------------------------------------------------------------
+%	PLAIN SUBSECTION FORMATTING (no bullet list, e.g. Education)
+%----------------------------------------------------------------------------------------
+
+\newenvironment{rSubsectionPlain}[4]{ % 4 parameters: title, dates, subtitle, location
+	\textbf{#1} \hfill {#2} % Bold title and date to the right
+	\ifthenelse{\equal{#3}{}}{}{ % If the third parameter is empty, don't output the subtitle line
+		\\ % Subtitle and location on a new line
+		\textit{#3} \hfill \textit{#4} % Output subtitle and location
+	}%
+	\smallskip
+}{
+	\vspace{0.5em} % Vertical whitespace after the entry
+}
+
+%----------------------------------------------------------------------------------------
 %	SUBSUBSECTION FORMATTING (for nested course entries)
 %----------------------------------------------------------------------------------------
 

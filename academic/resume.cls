@@ -133,7 +133,7 @@
 		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
 }{
 	\end{list}
-	\vspace{0.5em} % Vertical whitespace after the end of the list
+	\vspace{-0.5em} % Vertical whitespace after the end of the list
 }
 
 \newenvironment{rTextSubsection}[4]{ % 4 parameters: company name, year(s) employed, job title and location
@@ -147,6 +147,19 @@
 }{
 	\end{list}
 	}
+
+%----------------------------------------------------------------------------------------
+%	COMPACT SUBSECTION FORMATTING (for scholarships/awards)
+%----------------------------------------------------------------------------------------
+
+\newenvironment{rCompactSubsection}[2]{ % 2 parameters: award name, year
+	\textbf{#1} \hfill \textbf{#2} % Bold award name and bold date to the right
+	\begin{list}{$\sbullet [0.75]$}{\leftmargin=1.5em} % \cdot used for bullets, with indentation
+		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
+}{
+	\end{list}
+	\vspace{-0.2em} % Minimal vertical whitespace after the end of the list
+}
 
 %----------------------------------------------------------------------------------------
 %	SUBSUBSECTION FORMATTING (for nested course entries)

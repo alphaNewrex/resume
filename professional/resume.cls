@@ -50,10 +50,10 @@
 \usepackage{geometry} % Required for adjusting page dimensions and margins
 
 \geometry{
-	top=0.6in, % Top margin
-	bottom=0.6in, % Bottom margin
-	left=0.75in, % Left margin
-	right=0.75in, % Right margin
+	top=0.4in, % Top margin
+	bottom=0.4in, % Bottom margin
+	left=0.5in, % Left margin
+	right=0.5in, % Right margin
 	%showframe, % Uncomment to show how the type block is set on the page
 }
 
@@ -134,7 +134,7 @@
 		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
 }{
 	\end{list}
-	\vspace{0.5em} % Vertical whitespace after the end of the list
+	\vspace{-0.3em} % Vertical whitespace after the end of the list
 }
 
 \newenvironment{rTextSubsection}[4]{ % 4 parameters: company name, year(s) employed, job title and location
@@ -159,9 +159,8 @@
 		\\ % Subtitle and location on a new line
 		\textit{#3} \hfill \textit{#4} % Output subtitle and location
 	}%
-	\smallskip
 }{
-	\vspace{0.5em} % Vertical whitespace after the entry
+	\par\vspace{-0.3em} % Vertical whitespace after the entry
 }
 
 %----------------------------------------------------------------------------------------

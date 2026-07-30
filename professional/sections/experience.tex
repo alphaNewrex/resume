@@ -4,26 +4,25 @@
 
 \begin{rSection}{Experience}
 
-    \begin{rSubsection}{Microsoft --- Azure Migrate}{Hyderabad, India}{Software Engineer}{July 2024 --- July 2026}
-        \item Delivered the \textbf{AI-First} experience for Azure Migrate Agent by integrating \textbf{RAG} with a self-built \textbf{NL2KQL} tool into our assessment specialized agent for custom KQL query generation, improving agent accuracy from \textbf{40\% to 85\%}.
-        \item Owned the IISServer discovery and assessment microservice end-to-end --- a distributed, workflow-driven service built on a \textbf{pub/sub model} with concurrent task orchestration; extended native coverage to \textbf{.NET Core, Python, PHP, and Java} apps across VMWare vCenter environments.
-        \item Spearheaded the re-architecture of the compound assessment engine to integrate event-driven signals from \textbf{Azure Resource Graph}, enabling a more extensible and scalable assessment pipeline.
-        \item Drove expansion of daily E2E test coverage across all \textbf{44 Azure regions}, safeguarding service reliability and data integrity for global enterprise-scale deployments.
-        \item Sole owner of a critical fallback extension for non-container workloads; architected and shipped the feature, driving assessment coverage to \textbf{99.9\%} across \textbf{100K+} enterprise workloads.
-        \item On-call rotation across a Tier-1 global service; executed end-to-end RCAs and coordinated cross-team mitigations with partner leads, reducing Sev-2 incidents and sustaining the microservice at a \textbf{99.9\% SLA}.
+    \begin{rSubsection}{Microsoft --- Azure Migrate}{Hyderabad, India}{Software Engineer}{July 2024 -- July 2026}
+        \item Delivered the AI-First experience for Azure Migrate Agent, integrating RAG with a self-built NL2KQL tool for custom KQL generation and improving agent accuracy from \textbf{40\% to 85\%}.
+        \item Owned the IISServer discovery and assessment microservice end-to-end: a distributed pub/sub service with concurrent task orchestration; designed versioned REST and GraphQL contracts with integration test coverage, extending native support to .NET Core, Python, PHP, and Java apps on VMware vCenter.
+        \item Re-architected the compound assessment engine around event-driven Azure Resource Graph signals; migrated to .NET 8 and scaled persistence with Azure Cosmos DB batched bulk upserts, retry handling, and RU throughput controls.
+        \item Sole owner of a critical fallback extension for non-container workloads, driving assessment coverage to \textbf{99.9\%} across \textbf{100K+} enterprise workloads.
+        \item Drove daily E2E test coverage across all \textbf{44 Azure regions}, safeguarding reliability and data integrity for enterprise-scale deployments.
+        \item On-call (DRI) for a Tier-1 global service sustaining a \textbf{99.9\% SLA}: ran end-to-end RCAs, coordinated cross-team mitigations, and hardened delivery via managed-identity auth, CVE remediation, health probes, and CI/CD gates.
     \end{rSubsection}
 
-    \begin{rSubsection}{DevRev}{Bengaluru, India}{Member of Technical Staff Intern}{January 2024 --- June 2024}
-        \item Strengthened the reliability of the Global Notifications microservice handling \textbf{60K+ daily events}, spanning rate limiting, throttling, and deduplication.
-        \item Engineered distributed rate limiting via \textbf{Redis timed buckets} with event-based throttling, eliminating notification drops under bursty load.
-        \item Built a fault-tolerant deduplication engine reducing spam by \textbf{85\%}; implemented hierarchical clustering with \textbf{$O(\log n)$ lookup} via dendrogram traversal for topic-aware redundancy removal.
-        \item Engineered an LLM-driven summarization pipeline (GPT-4 via LangChain) for digest generation, compressing data throughput by \textbf{6x} and improving actionable signal density.
-        \item Drove performance profiling across high-throughput flows (reminders, tasks), surfacing bottlenecks and improving system reliability for global delivery.
+    \begin{rSubsection}{DevRev}{Bengaluru, India}{Member of Technical Staff Intern}{January 2024 -- June 2024}
+        \item Engineered distributed rate limiting for the Global Notifications microservice (\textbf{60K+ daily events}) via Redis timed buckets with event-based throttling, eliminating drops under bursty load.
+        \item Built a fault-tolerant deduplication engine reducing spam by \textbf{85\%} via hierarchical clustering with $O(\log n)$ dendrogram-traversal lookup.
+        \item Built an LLM-driven summarization pipeline (GPT-4 via LangChain) for digest generation, compressing data throughput by \textbf{6x}.
+        \item Profiled high-throughput flows (reminders, tasks), surfacing bottlenecks and improving reliability for global delivery.
     \end{rSubsection}
 
-    \begin{rSubsection}{Microsoft --- Azure Backup and Site Recovery}{Hyderabad, India}{Software Engineer Intern}{May 2023 --- July 2023}
-        \item Instrumented customer-side meter telemetry for the Azure Business Continuity Center using \textbf{OpenTelemetry} and \textbf{Geneva}, enabling real-time observability for V1 services.
-        \item Packaged the telemetry instrumentation as a reusable \textbf{NuGet library} with \textbf{99\% test coverage}, adopted by adjacent engineering teams to accelerate integration for continuity scenarios.
+    \begin{rSubsection}{Microsoft --- Azure Backup and Site Recovery}{Hyderabad, India}{Software Engineer Intern}{May 2023 -- July 2023}
+        \item Instrumented customer-side meter telemetry for the Azure Business Continuity Center using OpenTelemetry and Geneva, enabling real-time observability for V1 services.
+        \item Packaged the instrumentation as a reusable NuGet library with \textbf{99\% test coverage}, adopted by adjacent teams to accelerate integration.
     \end{rSubsection}
 
 \end{rSection}

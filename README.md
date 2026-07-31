@@ -2,25 +2,25 @@
 
 This repository contains LaTeX source files for both professional and academic resumes. The repository is structured with a modular approach, separating content into reusable components that can be easily updated and maintained.
 
-## Accessing Compiled PDFs
+## Compiled PDFs
 
-The GitHub Actions workflow automatically compiles the LaTeX files and pushes the resulting PDFs to a dedicated branch.
+### Latest Downloads
 
-### Latest Resume PDFs
+- [Professional resume: `output/Harsh_Gujarathi_Resume.pdf`](output/Harsh_Gujarathi_Resume.pdf)
+- [Academic CV: `output/Harsh_Gujarathi_CV.pdf`](output/Harsh_Gujarathi_CV.pdf)
 
-To access the latest compiled PDFs:
-1. Go to the [`gh-actions/output`](https://github.com/alphaNewrex/resume/tree/gh-actions/output) branch
-2. Navigate to the `output` directory
-3. Download the desired PDF file:
-   - `professional_resume.pdf` - Latest professional resume
-   - `academic_resume.pdf` - Latest academic resume
+These stable paths always contain the latest pair merged into `main`.
 
-### Personal Website Integration
+### Dated History
 
-The professional resume is also automatically integrated with the personal website repository:
-1. The workflow creates a branch named `gh-actions/resume` in the `alphanewrex.github.io` repository
-2. The professional resume is copied to the `public` folder
-3. To deploy this to your website, merge the `gh-actions/resume` branch into your main website branch
+Historical PDFs are archived on `main` at:
+
+- `output/professional/Harsh_Gujarathi_Resume_YYYY_MM_DD.pdf`
+- `output/academic/Harsh_Gujarathi_CV_YYYY_MM_DD.pdf`
+
+Dates use UTC. Every push to `main` compiles both documents. Source changes generate or update a PDF-only pull request from `gh-actions/output` when the PDFs change; deterministic same-day builds with no changes need no new pull request. Merging the generated pull request updates the stable latest copies, adds the current dated pair to the archive, and triggers one reconciliation build on `main`. That build normally creates no further PDF pull request when the bytes are unchanged. Previously merged dates remain available, while a changed build on the same UTC date replaces that date's files.
+
+Source or content pull requests compile both documents for validation, and their Actions artifact contains only the current professional and academic PDFs. Generated output-only archive pull requests intentionally skip their pull-request run because `output/**` is ignored for that trigger.
 
 ## Repository Structure
 ```
@@ -57,9 +57,11 @@ To work with this repository, you'll need:
 
 1. Download and install [Visual Studio Code](https://code.visualstudio.com/)
 2. Clone this repository:
-   ```bash
-   git clone https://github.com/alphaNewrex/resume.git
-   cd resume
+
+    ```bash
+    git clone https://github.com/alphaNewrex/resume.git
+    cd resume
+    ```
 
 ### Extensions
 
@@ -78,7 +80,9 @@ To work with this repository, you'll need:
 
 ## GitHub Actions
 
-This repository is configured with a GitHub Actions workflow that automatically builds the LaTeX resumes on every push to the repository. The generated PDF files are saved in the `output` directory.
+GitHub Actions compiles both LaTeX documents for source or content pull requests and every push to `main`. Generated output-only archive pull requests skip their pull-request run, but merging one triggers a `main` reconciliation build. Local PDFs are ignored; CI force-adds only the canonical dated archive paths and stable latest pair.
+
+The `sop/` directory is intentionally local-only, ignored by Git, and outside CI. Existing SOP history remains in the repository's earlier commits.
 
 [![Build LaTeX Resumes](https://github.com/alphaNewrex/resume/actions/workflows/build-latex.yaml/badge.svg)](https://github.com/alphaNewrex/resume/actions/workflows/build-latex.yaml)
 

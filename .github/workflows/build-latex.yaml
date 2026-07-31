@@ -5,19 +5,26 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "output/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      professional_path: ${{ steps.output_paths.outputs.professional_path }}
+      academic_path: ${{ steps.output_paths.outputs.academic_path }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create output directory
-        run: mkdir -p output
-
-      # Install TeX Live with all necessary packages
       - name: Install TeX Live
         run: |
           sudo apt-get update
@@ -32,153 +39,233 @@ jobs:
             latexmk \
             cm-super
 
-      # List all relevant files for debugging
-      - name: Debug file structure
+      - name: Set dated output paths
+        id: output_paths
+        shell: bash
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Files in professional directory:"
-          find ./professional -type f | grep -v ".git" | sort
-          echo "Files in academic directory:"
-          find ./academic -type f | grep -v ".git" | sort
+          set -euo pipefail
+          utc_date="$(date -u +%Y_%m_%d)"
+          professional_path="output/professional/Harsh_Gujarathi_Resume_${utc_date}.pdf"
+          academic_path="output/academic/Harsh_Gujarathi_CV_${utc_date}.pdf"
+          mkdir -p "$(dirname "$professional_path")" "$(dirname "$academic_path")"
+          printf 'professional_path=%s\n' "$professional_path" >> "$GITHUB_OUTPUT"
+          printf 'academic_path=%s\n' "$academic_path" >> "$GITHUB_OUTPUT"
+          printf 'SOURCE_DATE_EPOCH=%s\n' \
+            "$(date -u -d "${utc_date//_/-}" +%s)" >> "$GITHUB_ENV"
 
-      # Compile Professional Resume
-      - name: Compile Professional Resume
+      - name: Compile professional resume
+        working-directory: professional
+        shell: bash
+        env:
+          OUTPUT_PATH: ${{ steps.output_paths.outputs.professional_path }}
         run: |
-          cd professional
-          echo "Running pdflatex for professional resume..."
-          pdflatex -interaction=nonstopmode main.tex
-          echo "Running bibtex if bibliography exists..."
-          if grep -q '\\bibliography{' main.tex; then
-            bibtex main
-            pdflatex -interaction=nonstopmode main.tex
-          fi
-          echo "Running pdflatex again for references..."
-          pdflatex -interaction=nonstopmode main.tex
-          echo "Professional resume compilation finished"
-          cp main.pdf ../output/professional_resume.pdf || exit 1
+          set -euo pipefail
+          pdflatex -interaction=nonstopmode -halt-on-error main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error main.tex
+          cp -- main.pdf "${GITHUB_WORKSPACE}/${OUTPUT_PATH}"
 
-      # Compile Academic Resume
-      - name: Compile Academic Resume
+      - name: Compile academic resume
+        working-directory: academic
+        shell: bash
+        env:
+          OUTPUT_PATH: ${{ steps.output_paths.outputs.academic_path }}
         run: |
-          cd academic
-          echo "Running pdflatex for academic resume..."
-          pdflatex -interaction=nonstopmode main.tex
-          echo "Running bibtex if bibliography exists..."
-          if grep -q '\\bibliography{' main.tex; then
-            bibtex main
-            pdflatex -interaction=nonstopmode main.tex
-          fi
-          echo "Running pdflatex again for references..."
-          pdflatex -interaction=nonstopmode main.tex
-          echo "Academic resume compilation finished"
-          cp main.pdf ../output/academic_resume.pdf || exit 1
+          set -euo pipefail
+          pdflatex -interaction=nonstopmode -halt-on-error main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error main.tex
+          cp -- main.pdf "${GITHUB_WORKSPACE}/${OUTPUT_PATH}"
 
-      # Show output directory contents
-      - name: List output directory
-        run: ls -la output/
-
-      # Upload PDFs as artifacts
-      - name: Upload PDFs as artifacts
+      - name: Upload compiled resumes
         uses: actions/upload-artifact@v4
         with:
           name: compiled-resumes
-          path: output/*.pdf
-          if-no-files-found: warn
+          path: |
+            ${{ steps.output_paths.outputs.professional_path }}
+            ${{ steps.output_paths.outputs.academic_path }}
+          if-no-files-found: error
 
-      # Check if .gitignore is ignoring PDFs
-      - name: Check .gitignore
-        run: |
-          echo "Checking if .gitignore exists and contains output/*.pdf"
-          if [ -f ".gitignore" ]; then
-            cat .gitignore
-            echo ""
-            if grep -q "output/" .gitignore || grep -q "*.pdf" .gitignore; then
-              echo "Found rules that might be ignoring PDFs"
-            fi
-          else
-            echo "No .gitignore file found"
-          fi
-
-      # Commit PDFs to a separate branch
-      - name: Commit and push PDFs to output branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          # Create and switch to the output branch
-          git fetch --all
-          git checkout -B gh-actions/output
-
-          # Force add PDFs
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -f output/*.pdf
-
-          # Commit and push to the output branch
-          git commit -m "Update compiled resume PDFs" || echo "No changes to commit"
-          git push -f origin gh-actions/output
-
-  update_website:
-    needs: build_latex
+  publish_archive:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build_latex
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download compiled resumes
         uses: actions/download-artifact@v4
         with:
           name: compiled-resumes
-          path: ./resumes
+          path: ${{ runner.temp }}/compiled-resumes/output
 
-      - name: List downloaded files
-        run: ls -la ./resumes
-
-      - name: Checkout personal website repository
-        uses: actions/checkout@v4
-        with:
-          repository: alphaNewrex/alphanewrex.github.io
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          path: website
-
-      - name: Create resume branch and update website
+      - name: Publish archive pull request
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PROFESSIONAL_PATH: ${{ needs.build_latex.outputs.professional_path }}
+          ACADEMIC_PATH: ${{ needs.build_latex.outputs.academic_path }}
         run: |
-          # Navigate to website repository
-          cd website
+          set -euo pipefail
 
-          # Create and switch to resume branch
-          git checkout -B gh-actions/resume
+          temporary_dir="$(mktemp -d)"
+          trap 'rm -rf "$temporary_dir"' EXIT
+          archive_dir="${temporary_dir}/archive"
+          artifact_dir="${RUNNER_TEMP}/compiled-resumes"
+          professional_pattern='^output/professional/Harsh_Gujarathi_Resume_[0-9]{4}_[0-9]{2}_[0-9]{2}\.pdf$'
+          academic_pattern='^output/academic/Harsh_Gujarathi_CV_[0-9]{4}_[0-9]{2}_[0-9]{2}\.pdf$'
+          latest_professional_path="output/Harsh_Gujarathi_Resume.pdf"
+          latest_academic_path="output/Harsh_Gujarathi_CV.pdf"
+          latest_professional_pattern='^output/Harsh_Gujarathi_Resume\.pdf$'
+          latest_academic_pattern='^output/Harsh_Gujarathi_CV\.pdf$'
 
-          # Create public folder if it doesn't exist
-          mkdir -p public
+          [[ "$PROFESSIONAL_PATH" =~ $professional_pattern ]]
+          [[ "$ACADEMIC_PATH" =~ $academic_pattern ]]
+          test -f "${artifact_dir}/${PROFESSIONAL_PATH}"
+          test -f "${artifact_dir}/${ACADEMIC_PATH}"
 
-          # Copy the professional resume to the public folder and rename
-          cp ../resumes/professional_resume.pdf public/resume.pdf
-
-          # Commit and push changes
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/resume.pdf
-          git commit -m "Update resume" || echo "No changes to commit"
-          git push -f origin gh-actions/resume
 
-      - name: Create Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        run: |
-          # Install GitHub CLI
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh
+          main_is_source_compatible() {
+            local main_sha="$1"
+            git merge-base --is-ancestor "$GITHUB_SHA" "$main_sha" &&
+              git diff --quiet "$GITHUB_SHA" "$main_sha" -- \
+                . ':(exclude)output/**'
+          }
 
-          # Create PR using GitHub CLI
-          cd website
-          PR_EXISTS=$(gh pr list --repo alphaNewrex/alphanewrex.github.io --head gh-actions/resume --json number | jq length)
+          git fetch --prune origin "+refs/heads/*:refs/remotes/origin/*"
 
-          if [ "$PR_EXISTS" -eq "0" ]; then
-            gh pr create --repo alphaNewrex/alphanewrex.github.io \
+          while true; do
+            candidate_main="$(git rev-parse origin/main)"
+            if ! main_is_source_compatible "$candidate_main"; then
+              echo "origin/main is not a source-compatible descendant of the trigger SHA; skipping archive publishing."
+              exit 0
+            fi
+
+            rm -rf "$archive_dir"
+            mkdir -p "$archive_dir"
+            archive_paths=()
+            if git show-ref --verify --quiet refs/remotes/origin/gh-actions/output; then
+              git ls-tree -r -z --name-only origin/gh-actions/output -- \
+                output/professional output/academic \
+                > "${temporary_dir}/archive-paths"
+              while IFS= read -r -d '' archive_path; do
+                if [[ "$archive_path" =~ $professional_pattern || \
+                      "$archive_path" =~ $academic_pattern ]]; then
+                  if git cat-file -e "${candidate_main}:${archive_path}" 2>/dev/null; then
+                    continue
+                  fi
+                  mkdir -p "${archive_dir}/$(dirname "$archive_path")"
+                  git show "origin/gh-actions/output:${archive_path}" \
+                    > "${archive_dir}/${archive_path}"
+                  archive_paths+=("$archive_path")
+                fi
+              done < "${temporary_dir}/archive-paths"
+            fi
+
+            git checkout -f -B gh-actions/output "$candidate_main"
+
+            for archive_path in "${archive_paths[@]}"; do
+              mkdir -p "$(dirname "$archive_path")"
+              cp -- "${archive_dir}/${archive_path}" "$archive_path"
+            done
+
+            mkdir -p "$(dirname "$PROFESSIONAL_PATH")" "$(dirname "$ACADEMIC_PATH")"
+            cp -- "${artifact_dir}/${PROFESSIONAL_PATH}" "$PROFESSIONAL_PATH"
+            cp -- "${artifact_dir}/${ACADEMIC_PATH}" "$ACADEMIC_PATH"
+            cp -- "${artifact_dir}/${PROFESSIONAL_PATH}" "$latest_professional_path"
+            cp -- "${artifact_dir}/${ACADEMIC_PATH}" "$latest_academic_path"
+
+            canonical_paths=(
+              "${archive_paths[@]}"
+              "$PROFESSIONAL_PATH"
+              "$ACADEMIC_PATH"
+              "$latest_professional_path"
+              "$latest_academic_path"
+            )
+            git add -f -- "${canonical_paths[@]}"
+
+            git diff --cached --name-only -z > "${temporary_dir}/staged-paths"
+            while IFS= read -r -d '' staged_path; do
+              if [[ ! "$staged_path" =~ $professional_pattern && \
+                    ! "$staged_path" =~ $academic_pattern && \
+                    ! "$staged_path" =~ $latest_professional_pattern && \
+                    ! "$staged_path" =~ $latest_academic_pattern ]]; then
+                printf 'Refusing to publish non-canonical path: %s\n' "$staged_path" >&2
+                exit 1
+              fi
+            done < "${temporary_dir}/staged-paths"
+
+            archive_changes=false
+            if ! git diff --cached --quiet; then
+              archive_changes=true
+            fi
+
+            push_required=false
+            if git show-ref --verify --quiet refs/remotes/origin/gh-actions/output; then
+              if ! git merge-base --is-ancestor \
+                   "$candidate_main" origin/gh-actions/output ||
+                 ! git diff --cached --quiet origin/gh-actions/output --; then
+                push_required=true
+              fi
+            elif [ "$archive_changes" = true ]; then
+              push_required=true
+            fi
+
+            if [ "$push_required" = true ] && [ "$archive_changes" = true ]; then
+              git commit -m "Archive generated resume PDFs"
+            fi
+
+            git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+            current_main="$(git rev-parse origin/main)"
+            if ! main_is_source_compatible "$current_main"; then
+              echo "origin/main is not a source-compatible descendant of the trigger SHA; skipping archive publishing."
+              exit 0
+            fi
+            if [ "$candidate_main" != "$current_main" ]; then
+              echo "origin/main advanced compatibly; rebuilding archive candidate."
+              continue
+            fi
+
+            if [ "$push_required" = true ]; then
+              git push --force-with-lease origin gh-actions/output
+            else
+              echo "Staging branch already contains the archive candidate; skipping push."
+            fi
+
+            git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+            current_main="$(git rev-parse origin/main)"
+            if ! main_is_source_compatible "$current_main"; then
+              echo "origin/main is not a source-compatible descendant of the trigger SHA; skipping pull request reconciliation."
+              exit 0
+            fi
+            if [ "$candidate_main" != "$current_main" ]; then
+              echo "origin/main advanced compatibly; rebuilding archive candidate."
+              continue
+            fi
+            break
+          done
+
+          open_prs="$(gh pr list \
+            --state open \
+            --base main \
+            --head gh-actions/output \
+            --json isCrossRepository \
+            --jq '[.[] | select(.isCrossRepository == false)] | length')"
+
+          if [ "$archive_changes" = true ] && [ "$open_prs" -eq 0 ]; then
+            gh pr create \
               --base main \
-              --head gh-actions/resume \
-              --title "Update Resume PDF" \
-              --body "This PR updates the resume PDF file. Automatically created by GitHub Actions."
-            echo "Pull request created successfully!"
-          else
-            echo "Pull request already exists, skipping creation"
+              --head gh-actions/output \
+              --title "Archive generated resume PDFs" \
+              --body "This pull request archives the dated professional and academic resume PDFs generated from main."
+          elif [ "$archive_changes" = false ]; then
+            echo "No archive changes relative to main; no pull request is needed."
           fi

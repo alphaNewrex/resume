@@ -4,23 +4,23 @@
 
 \begin{rSection}{Experience}
 
-    \begin{rSubsection}{Microsoft --- Azure Migrate}{Hyderabad, India}{Software Engineer}{July 2024 -- July 2026}
+    \begin{rSubsection}{Microsoft}{Hyderabad, India}{Software Engineer}{July 2024 -- July 2026}
         \item Delivered the AI-First experience for Azure Migrate Agent, integrating RAG with a self-built NL2KQL tool for custom KQL generation and improving agent accuracy from \textbf{40\% to 85\%}.
-        \item Owned the IISServer discovery and assessment microservice end-to-end: a distributed pub/sub service with concurrent task orchestration; designed versioned REST and GraphQL contracts with integration test coverage, extending native support to .NET Core, Python, PHP, and Java apps on VMware vCenter.
+        \item Owned the IISServer discovery and assessment microservice end-to-end: a distributed pub/sub service with concurrent task orchestration; designed versioned REST API contracts with integration test coverage, extending native support to .NET Core, Python, PHP, and Java apps on VMware vCenter.
         \item Re-architected the compound assessment engine around event-driven Azure Resource Graph signals; migrated to .NET 8 and scaled persistence with Azure Cosmos DB batched bulk upserts, retry handling, and RU throughput controls.
         \item Sole owner of a critical fallback extension for non-container workloads, driving assessment coverage to \textbf{99.9\%} across \textbf{100K+} enterprise workloads.
         \item Drove daily E2E test coverage across all \textbf{44 Azure regions}, safeguarding reliability and data integrity for enterprise-scale deployments.
-        \item On-call (DRI) for a Tier-1 global service sustaining a \textbf{99.9\% SLA}: ran end-to-end RCAs, coordinated cross-team mitigations, and hardened delivery via managed-identity auth, CVE remediation, health probes, and CI/CD gates.
+        \item On-call (DRI) for a Ring-1 service sustaining a \textbf{99.9\% SLA}: ran end-to-end RCAs, coordinated cross-team mitigations, and hardened delivery via managed-identity auth, CVE remediation, health probes, and CI/CD gates.
     \end{rSubsection}
 
     \begin{rSubsection}{DevRev}{Bengaluru, India}{Member of Technical Staff Intern}{January 2024 -- June 2024}
         \item Engineered distributed rate limiting for the Global Notifications microservice (\textbf{60K+ daily events}) via Redis timed buckets with event-based throttling, eliminating drops under bursty load.
         \item Built a fault-tolerant deduplication engine reducing spam by \textbf{85\%} via hierarchical clustering with $O(\log n)$ dendrogram-traversal lookup.
-        \item Built an LLM-driven summarization pipeline (GPT-4 via LangChain) for digest generation, compressing data throughput by \textbf{6x}.
+        \item Built an LLM-driven summarization pipeline (GPT-4) for digest generation, compressing data throughput by \textbf{6x}.
         \item Profiled high-throughput flows (reminders, tasks), surfacing bottlenecks and improving reliability for global delivery.
     \end{rSubsection}
 
-    \begin{rSubsection}{Microsoft --- Azure Backup and Site Recovery}{Hyderabad, India}{Software Engineer Intern}{May 2023 -- July 2023}
+    \begin{rSubsection}{Microsoft}{Hyderabad, India}{Software Engineer Intern}{May 2023 -- July 2023}
         \item Instrumented customer-side meter telemetry for the Azure Business Continuity Center using OpenTelemetry and Geneva, enabling real-time observability for V1 services.
         \item Packaged the instrumentation as a reusable NuGet library with \textbf{99\% test coverage}, adopted by adjacent teams to accelerate integration.
     \end{rSubsection}

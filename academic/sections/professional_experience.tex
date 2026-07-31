@@ -4,23 +4,26 @@
 
 \begin{rSection}{Professional Experience}
 
-    \begin{rSubsection}{Software Engineer}{July 2024 --- Present}{Microsoft --- Azure Migrate}{Hyderabad, India}
-        \item Engineering \textbf{distributed, event-driven pipelines} using \textbf{Kubernetes} and \textbf{Azure Resource Graph} to scale asset discovery and assessment across heterogeneous enterprise environments.
-        \item Architected a critical fallback extension for non-container workloads, driving assessment coverage to \textbf{99.9\%} across a dataset of over \textbf{100K enterprise workloads}.
-        \item Optimized container orchestration, concurrency models, and resource utilization, significantly reducing latency and improving throughput for large-scale migration services.
-        \item Designed application-centric migration workflows for Java/.NET web apps, integrating SQL and VM assessment signals to enable end-to-end cloud modernization.
+    \begin{rSubsection}{Software Engineer}{July 2024 --- July 2026}{Microsoft --- Azure Migrate}{Hyderabad, India}
+        \item Delivered the \textbf{AI-First} experience for Azure Migrate Agent by integrating \textbf{RAG} with a self-built \textbf{NL2KQL} tool for custom KQL query generation, improving agent accuracy from \textbf{40\% to 85\%}.
+        \item Owned the IISServer discovery and assessment microservice end-to-end --- a distributed, workflow-driven service built on a \textbf{pub/sub model} with concurrent task orchestration; extended native coverage to \textbf{.NET Core, Python, PHP, and Java} apps across VMWare vCenter environments.
+        \item Spearheaded the re-architecture of the compound assessment engine to integrate event-driven signals from \textbf{Azure Resource Graph}, enabling a more extensible and scalable assessment pipeline.
+        \item Drove expansion of daily E2E test coverage across all \textbf{44 Azure regions}, safeguarding service reliability and data integrity for global enterprise-scale deployments.
+        \item Sole owner of a critical fallback extension for non-container workloads; architected and shipped the feature, driving assessment coverage to \textbf{99.9\%} across \textbf{100K+} enterprise workloads.
+        \item On-call rotation across a Tier-1 global service; executed end-to-end RCAs and coordinated cross-team mitigations, reducing Sev-2 incidents and sustaining the microservice at a \textbf{99.9\% SLA}.
     \end{rSubsection}
 
     \begin{rSubsection}{Member of Technical Staff Intern}{January 2024 --- June 2024}{DevRev}{Bengaluru, India}
-        \item Scaled the Global Notifications microservice to handle \textbf{60K+ daily events} via distributed rate limiting, event-based throttling, and smart bucket clustering.
-        \item Architected a fault-tolerant limiter reducing spam by \textbf{85\%}; implemented hierarchical clustering with \textbf{$O(\log n)$ retrieval} to eliminate redundancy based on topic relevance.
-        \item Engineered an \textbf{LLM-driven summarization pipeline} (GPT-4/LangChain) for digest generation, compressing information load by \textbf{6x} and improving actionable signal density.
-        \item Owned performance profiling across high-throughput flows (reminders, tasks), optimizing system reliability for global delivery.
+        \item Strengthened the reliability of the Global Notifications microservice handling \textbf{60K+ daily events}, spanning rate limiting, throttling, and deduplication.
+        \item Engineered distributed rate limiting via \textbf{Redis timed buckets} with event-based throttling, eliminating notification drops under bursty load.
+        \item Built a fault-tolerant deduplication engine reducing spam by \textbf{85\%}; implemented hierarchical clustering with \textbf{$O(\log n)$ lookup} via dendrogram traversal for topic-aware redundancy removal.
+        \item Engineered an LLM-driven summarization pipeline (GPT-4 via LangChain) for digest generation, compressing data throughput by \textbf{6x} and improving actionable signal density.
+        \item Drove performance profiling across high-throughput flows (reminders, tasks), surfacing bottlenecks and improving system reliability for global delivery.
     \end{rSubsection}
 
-    \begin{rSubsection}{Software Engineer Intern}{May 2023 --- July 2023}{Microsoft}{Hyderabad, India}
-        \item Instrumented customer-side meter telemetry using \textbf{OpenTelemetry} and \textbf{Geneva} for Azure Business Continuity Center, enabling real-time observability for V1 services.
-        \item Designed resilience and observability surfaces for continuity scenarios, delivering reusable metrics artifacts adopted by adjacent engineering teams to accelerate integration.
+    \begin{rSubsection}{Software Engineer Intern}{May 2023 --- July 2023}{Microsoft --- Azure Backup and Site Recovery}{Hyderabad, India}
+        \item Instrumented customer-side meter telemetry for the Azure Business Continuity Center using \textbf{OpenTelemetry} and \textbf{Geneva}, enabling real-time observability for V1 services.
+        \item Packaged the telemetry instrumentation as a reusable \textbf{NuGet library} with \textbf{99\% test coverage}, adopted by adjacent engineering teams to accelerate integration for continuity scenarios.
     \end{rSubsection}
 
 \end{rSection}

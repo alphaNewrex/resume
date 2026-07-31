@@ -96,8 +96,8 @@
 \let\ori@document=\document % Store the original \document command
 \renewcommand{\document}{
   \ori@document  % Output the original \document command but add to it below
-  \printname % Output the user's name
-  \@ifundefined{@addressone}{}{\printaddress{\@addressone}} % Single address line
+  % \printname % Output the user's name
+  % \@ifundefined{@addressone}{}{\printaddress{\@addressone}} % Single address line
 }
 
 %----------------------------------------------------------------------------------------
@@ -116,6 +116,7 @@
 	\item[] % Empty list item to enable indentation
 }{
 	\end{list}
+    \vspace{-0.5em} % Reduce vertical whitespace after section
 }
 
 %----------------------------------------------------------------------------------------
@@ -133,7 +134,7 @@
 		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
 }{
 	\end{list}
-	\vspace{-0.5em} % Vertical whitespace after the end of the list
+	\vspace{0.5em} % Vertical whitespace after the end of the list
 }
 
 \newenvironment{rTextSubsection}[4]{ % 4 parameters: company name, year(s) employed, job title and location
@@ -149,30 +150,18 @@
 	}
 
 %----------------------------------------------------------------------------------------
-%	PLAIN TEXT SUBSECTION FORMATTING (no bullet list, e.g. Education)
+%	PLAIN SUBSECTION FORMATTING (no bullet list, e.g. Education)
 %----------------------------------------------------------------------------------------
 
-\newenvironment{rTextSubsectionPlain}[4]{ % 4 parameters: title, dates, subtitle, location
+\newenvironment{rSubsectionPlain}[4]{ % 4 parameters: title, dates, subtitle, location
 	\textbf{#1} \hfill {#2} % Bold title and date to the right
 	\ifthenelse{\equal{#3}{}}{}{ % If the third parameter is empty, don't output the subtitle line
 		\\ % Subtitle and location on a new line
 		\textit{#3} \hfill \textit{#4} % Output subtitle and location
 	}%
+	\smallskip
 }{
-	\par\vspace{-0.3em} % Vertical whitespace after the entry
-}
-
-%----------------------------------------------------------------------------------------
-%	COMPACT SUBSECTION FORMATTING (for scholarships/awards)
-%----------------------------------------------------------------------------------------
-
-\newenvironment{rCompactSubsection}[2]{ % 2 parameters: award name, year
-	\textbf{#1} \hfill \textbf{#2} % Bold award name and bold date to the right
-	\begin{list}{$\sbullet [0.75]$}{\leftmargin=1.5em} % \cdot used for bullets, with indentation
-		\setlength{\itemsep}{-0.5em} \vspace{-0.5em} % Reduce vertical spacing between items in the list for a tighter look
-}{
-	\end{list}
-	\vspace{-0.2em} % Minimal vertical whitespace after the end of the list
+	\par\vspace{0.1em} % Vertical whitespace after the entry
 }
 
 %----------------------------------------------------------------------------------------

@@ -52,10 +52,15 @@
 \geometry{
 	top=0.4in, % Top margin
 	bottom=0.4in, % Bottom margin
-	left=0.5in, % Left margin
-	right=0.5in, % Right margin
+	left=0.4in, % Left margin
+	right=0.4in, % Right margin
 	%showframe, % Uncomment to show how the type block is set on the page
 }
+
+% Keep resume words intact at line breaks; allow modest spacing flexibility instead.
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\emergencystretch=2em
 
 \newcommand\sbullet[1][.5]{\mathbin{\vcenter{\hbox{\scalebox{#1}{$\bullet$}}}}}
 
@@ -124,10 +129,10 @@
 %----------------------------------------------------------------------------------------
 
 \newenvironment{rSubsection}[4]{ % 4 parameters: company name, year(s) employed, job title and location
-	\textbf{#1} \hfill {#2} % Bold company name and date to the right
+	\textbf{#1} \hfill \ifthenelse{\equal{#3}{}}{#2}{\textbf{#2}} % Bold company and location; keep project links regular
 	\ifthenelse{\equal{#3}{}}{}{ % If the third parameter is empty, don't output the job title and location line
 		\\ % Job title and location on a new line
-		\textit{#3} \hfill \textit{#4} % Output job title and location
+		\textbf{#3} \hfill \textbf{#4} % Bold job title and dates
 	}%
 	\smallskip % Vertical whitespace
 	\begin{list}{$\sbullet [0.75]$}{\leftmargin=1.5em} % \cdot used for bullets, with indentation
@@ -154,10 +159,10 @@
 %----------------------------------------------------------------------------------------
 
 \newenvironment{rSubsectionPlain}[4]{ % 4 parameters: title, dates, subtitle, location
-	\textbf{#1} \hfill {#2} % Bold title and date to the right
+	\textbf{#1} \hfill \textbf{#2} % Bold institution and location
 	\ifthenelse{\equal{#3}{}}{}{ % If the third parameter is empty, don't output the subtitle line
 		\\ % Subtitle and location on a new line
-		\textit{#3} \hfill \textit{#4} % Output subtitle and location
+		\textbf{#3} \hfill \textbf{#4} % Bold degree and dates
 	}%
 }{
 	\par\vspace{-0.3em} % Vertical whitespace after the entry

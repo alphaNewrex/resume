@@ -19,6 +19,9 @@ jobs:
       contents: read
     outputs:
       professional_path: ${{ steps.output_paths.outputs.professional_path }}
+      professional_gatech_path: ${{ steps.output_paths.outputs.professional_gatech_path }}
+      mle_path: ${{ steps.output_paths.outputs.mle_path }}
+      mle_gatech_path: ${{ steps.output_paths.outputs.mle_gatech_path }}
       academic_path: ${{ steps.output_paths.outputs.academic_path }}
 
     steps:
@@ -46,9 +49,15 @@ jobs:
           set -euo pipefail
           utc_date="$(date -u +%Y_%m_%d)"
           professional_path="output/professional/Harsh_Gujarathi_Resume_${utc_date}.pdf"
+          professional_gatech_path="output/professional/Harsh_Gujarathi_Resume_GeorgiaTech_${utc_date}.pdf"
+          mle_path="output/professional/Harsh_Gujarathi_MLE_Resume_${utc_date}.pdf"
+          mle_gatech_path="output/professional/Harsh_Gujarathi_MLE_Resume_GeorgiaTech_${utc_date}.pdf"
           academic_path="output/academic/Harsh_Gujarathi_CV_${utc_date}.pdf"
           mkdir -p "$(dirname "$professional_path")" "$(dirname "$academic_path")"
           printf 'professional_path=%s\n' "$professional_path" >> "$GITHUB_OUTPUT"
+          printf 'professional_gatech_path=%s\n' "$professional_gatech_path" >> "$GITHUB_OUTPUT"
+          printf 'mle_path=%s\n' "$mle_path" >> "$GITHUB_OUTPUT"
+          printf 'mle_gatech_path=%s\n' "$mle_gatech_path" >> "$GITHUB_OUTPUT"
           printf 'academic_path=%s\n' "$academic_path" >> "$GITHUB_OUTPUT"
           printf 'SOURCE_DATE_EPOCH=%s\n' \
             "$(date -u -d "${utc_date//_/-}" +%s)" >> "$GITHUB_ENV"
@@ -63,6 +72,39 @@ jobs:
           pdflatex -interaction=nonstopmode -halt-on-error main.tex
           pdflatex -interaction=nonstopmode -halt-on-error main.tex
           cp -- main.pdf "${GITHUB_WORKSPACE}/${OUTPUT_PATH}"
+
+      - name: Compile Georgia Tech professional resume
+        working-directory: professional
+        shell: bash
+        env:
+          OUTPUT_PATH: ${{ steps.output_paths.outputs.professional_gatech_path }}
+        run: |
+          set -euo pipefail
+          pdflatex -interaction=nonstopmode -halt-on-error -jobname=main_gatech main_gatech.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -jobname=main_gatech main_gatech.tex
+          cp -- main_gatech.pdf "${GITHUB_WORKSPACE}/${OUTPUT_PATH}"
+
+      - name: Compile MLE resume
+        working-directory: professional
+        shell: bash
+        env:
+          OUTPUT_PATH: ${{ steps.output_paths.outputs.mle_path }}
+        run: |
+          set -euo pipefail
+          pdflatex -interaction=nonstopmode -halt-on-error main_mle.tex
+          pdflatex -interaction=nonstopmode -halt-on-error main_mle.tex
+          cp -- main_mle.pdf "${GITHUB_WORKSPACE}/${OUTPUT_PATH}"
+
+      - name: Compile Georgia Tech MLE resume
+        working-directory: professional
+        shell: bash
+        env:
+          OUTPUT_PATH: ${{ steps.output_paths.outputs.mle_gatech_path }}
+        run: |
+          set -euo pipefail
+          pdflatex -interaction=nonstopmode -halt-on-error -jobname=main_mle_gatech main_mle_gatech.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -jobname=main_mle_gatech main_mle_gatech.tex
+          cp -- main_mle_gatech.pdf "${GITHUB_WORKSPACE}/${OUTPUT_PATH}"
 
       - name: Compile academic resume
         working-directory: academic
@@ -81,6 +123,9 @@ jobs:
           name: compiled-resumes
           path: |
             ${{ steps.output_paths.outputs.professional_path }}
+            ${{ steps.output_paths.outputs.professional_gatech_path }}
+            ${{ steps.output_paths.outputs.mle_path }}
+            ${{ steps.output_paths.outputs.mle_gatech_path }}
             ${{ steps.output_paths.outputs.academic_path }}
           if-no-files-found: error
 
@@ -110,6 +155,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           PROFESSIONAL_PATH: ${{ needs.build_latex.outputs.professional_path }}
+          PROFESSIONAL_GATECH_PATH: ${{ needs.build_latex.outputs.professional_gatech_path }}
+          MLE_PATH: ${{ needs.build_latex.outputs.mle_path }}
+          MLE_GATECH_PATH: ${{ needs.build_latex.outputs.mle_gatech_path }}
           ACADEMIC_PATH: ${{ needs.build_latex.outputs.academic_path }}
         run: |
           set -euo pipefail
@@ -118,16 +166,24 @@ jobs:
           trap 'rm -rf "$temporary_dir"' EXIT
           archive_dir="${temporary_dir}/archive"
           artifact_dir="${RUNNER_TEMP}/compiled-resumes"
-          professional_pattern='^output/professional/Harsh_Gujarathi_Resume_[0-9]{4}_[0-9]{2}_[0-9]{2}\.pdf$'
+          professional_pattern='^output/professional/Harsh_Gujarathi_(Resume|Resume_GeorgiaTech|MLE_Resume|MLE_Resume_GeorgiaTech)_[0-9]{4}_[0-9]{2}_[0-9]{2}\.pdf$'
           academic_pattern='^output/academic/Harsh_Gujarathi_CV_[0-9]{4}_[0-9]{2}_[0-9]{2}\.pdf$'
           latest_professional_path="output/Harsh_Gujarathi_Resume.pdf"
+          latest_professional_gatech_path="output/Harsh_Gujarathi_Resume_GeorgiaTech.pdf"
+          latest_mle_path="output/Harsh_Gujarathi_MLE_Resume.pdf"
+          latest_mle_gatech_path="output/Harsh_Gujarathi_MLE_Resume_GeorgiaTech.pdf"
           latest_academic_path="output/Harsh_Gujarathi_CV.pdf"
-          latest_professional_pattern='^output/Harsh_Gujarathi_Resume\.pdf$'
-          latest_academic_pattern='^output/Harsh_Gujarathi_CV\.pdf$'
+          latest_pattern='^output/Harsh_Gujarathi_(Resume|Resume_GeorgiaTech|MLE_Resume|MLE_Resume_GeorgiaTech|CV)\.pdf$'
 
           [[ "$PROFESSIONAL_PATH" =~ $professional_pattern ]]
+          [[ "$PROFESSIONAL_GATECH_PATH" =~ $professional_pattern ]]
+          [[ "$MLE_PATH" =~ $professional_pattern ]]
+          [[ "$MLE_GATECH_PATH" =~ $professional_pattern ]]
           [[ "$ACADEMIC_PATH" =~ $academic_pattern ]]
           test -f "${artifact_dir}/${PROFESSIONAL_PATH}"
+          test -f "${artifact_dir}/${PROFESSIONAL_GATECH_PATH}"
+          test -f "${artifact_dir}/${MLE_PATH}"
+          test -f "${artifact_dir}/${MLE_GATECH_PATH}"
           test -f "${artifact_dir}/${ACADEMIC_PATH}"
 
           git config --local user.email "action@github.com"
@@ -179,15 +235,27 @@ jobs:
 
             mkdir -p "$(dirname "$PROFESSIONAL_PATH")" "$(dirname "$ACADEMIC_PATH")"
             cp -- "${artifact_dir}/${PROFESSIONAL_PATH}" "$PROFESSIONAL_PATH"
+            cp -- "${artifact_dir}/${PROFESSIONAL_GATECH_PATH}" "$PROFESSIONAL_GATECH_PATH"
+            cp -- "${artifact_dir}/${MLE_PATH}" "$MLE_PATH"
+            cp -- "${artifact_dir}/${MLE_GATECH_PATH}" "$MLE_GATECH_PATH"
             cp -- "${artifact_dir}/${ACADEMIC_PATH}" "$ACADEMIC_PATH"
             cp -- "${artifact_dir}/${PROFESSIONAL_PATH}" "$latest_professional_path"
+            cp -- "${artifact_dir}/${PROFESSIONAL_GATECH_PATH}" "$latest_professional_gatech_path"
+            cp -- "${artifact_dir}/${MLE_PATH}" "$latest_mle_path"
+            cp -- "${artifact_dir}/${MLE_GATECH_PATH}" "$latest_mle_gatech_path"
             cp -- "${artifact_dir}/${ACADEMIC_PATH}" "$latest_academic_path"
 
             canonical_paths=(
               "${archive_paths[@]}"
               "$PROFESSIONAL_PATH"
+              "$PROFESSIONAL_GATECH_PATH"
+              "$MLE_PATH"
+              "$MLE_GATECH_PATH"
               "$ACADEMIC_PATH"
               "$latest_professional_path"
+              "$latest_professional_gatech_path"
+              "$latest_mle_path"
+              "$latest_mle_gatech_path"
               "$latest_academic_path"
             )
             git add -f -- "${canonical_paths[@]}"
@@ -196,8 +264,7 @@ jobs:
             while IFS= read -r -d '' staged_path; do
               if [[ ! "$staged_path" =~ $professional_pattern && \
                     ! "$staged_path" =~ $academic_pattern && \
-                    ! "$staged_path" =~ $latest_professional_pattern && \
-                    ! "$staged_path" =~ $latest_academic_pattern ]]; then
+                    ! "$staged_path" =~ $latest_pattern ]]; then
                 printf 'Refusing to publish non-canonical path: %s\n' "$staged_path" >&2
                 exit 1
               fi
@@ -265,7 +332,7 @@ jobs:
               --base main \
               --head gh-actions/output \
               --title "Archive generated resume PDFs" \
-              --body "This pull request archives the dated professional and academic resume PDFs generated from main."
+              --body "This pull request archives four professional resume variants and the academic CV generated from main."
           elif [ "$archive_changes" = false ]; then
             echo "No archive changes relative to main; no pull request is needed."
           fi

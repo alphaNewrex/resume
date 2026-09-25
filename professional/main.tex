@@ -4,6 +4,8 @@
 % License : MIT
 %------------------------
 
+\providecommand{\ResumeHeaderPath}{sections/header}
+
 \documentclass{resume} % Use the resume class
 
 % Include style files
@@ -13,19 +15,18 @@
 \usepackage[hidelinks]{hyperref} % Add hyperref for links
 
 % \name{Harsh Gujarathi}
-% \address{Email: \href{mailto:gujarathiharsh02@gmail.com}{gujarathiharsh02@gmail.com} \\ Mobile: +1-470-455-1467 \\ \href{https://github.com/alphaNewrex}{github.com/alphaNewrex} \\ \href{https://www.linkedin.com/in/harsh-gujarathi-39474a1b8/}{linkedin.com/in/harsh-gujarathi}}
+% \address{Email: \href{mailto:hgujarathi3@gatech.edu}{hgujarathi3@gatech.edu} \\ Mobile: +1-470-455-1467 \\ \href{https://github.com/alphaNewrex}{github.com/alphaNewrex} \\ \href{https://www.linkedin.com/in/harsh-gujarathi-39474a1b8/}{linkedin.com/in/harsh-gujarathi}}
 
 \begin{document}
 
 %---------- HEADER -----------------
-\input{sections/header} % Header is handled by resume.cls
+\input{\ResumeHeaderPath} % Header is selected by the entrypoint
 
 %---------- CONTENT SECTIONS -------
 \input{sections/education}
 \input{sections/experience}
 
 \input{sections/projects}
-
 \input{sections/skills}
 
 % \input{sections/awards}
